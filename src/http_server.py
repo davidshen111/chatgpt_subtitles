@@ -7,11 +7,6 @@ app = Flask(__name__)
 
 @app.route('/summaries/bilibili', methods=['POST'])
 def process_summary():
-    #file_key = list(request.files.keys())[0]  
-    #file = request.files[file_key]
-    #data = file.read()  
-    #json_data = data.decode('utf-8')  
-    #json_dict = json.loads(json_data)  
     data = json.loads(request.data) 
     summaries = fetch_summaries(data)
     result = {'data': summaries}

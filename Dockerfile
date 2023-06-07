@@ -10,7 +10,7 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
 # copy project
-COPY ./.env ./*.py /app/
+COPY ./src/.env ./src/*.py /app/
 
 # expose port
 EXPOSE 8000
