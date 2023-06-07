@@ -11,8 +11,7 @@ def load_json_from_file(file_name):
     try:
         with open(file_name, encoding="utf8") as f:
             data = json.load(f)
-            content_list = [item["content"] for item in data["body"]]
-        return content_list
+        return data
     except Exception as e:
         print(f"Error occurred while loading file '{file_name}': {str(e)}")
     return []
@@ -78,13 +77,13 @@ def message_template_1 (user_message_1):
 def message_template_2 (user_message_1, user_message_2):
     delimiter = "####"
     system_message = f"""
-    Your task is to generate an overall summary using the user's input. \
-    This is an accumulative task, and you already haves the summary from the previous input. \
-    The summary is enclosed within {delimiter} as shown: {delimiter}{user_message_1}{delimiter} \
-    
-    Update the existing summary by accumulating the user's new input. \
+    Your task is to generate an overall summary using the previous summary plus user's new input. \
+    This is an accumulative task. \
+    The previous summary is enclosed within {delimiter} as shown below: {delimiter}{user_message_1}{delimiter} \
+
+    Summarize the user's new input and incorporate it into the existing summary as the output. \
+    Update the output to ensure its coherence. \
     The user's new input will be enclosed by {delimiter} characters. \
-    Do not just overwrite the previous summary. \
     The output should be a UTF-8 encoded text written in Chinese. \
     """   
     messages =  [ 
@@ -95,9 +94,7 @@ def message_template_2 (user_message_1, user_message_2):
     ] 
     return messages
 
-
-def main():
-    # os.chdir('C:\\work\\chatgpt_subtitles')
+def fetch_summaries(input_subtitles):
     _ = load_dotenv(find_dotenv()) # read local .env file
     openai.api_key  = os.environ['OPENAI_API_KEY']
     split_args = {
@@ -105,18 +102,22 @@ def main():
         'overlap_size': int(os.environ['OVERLAP_SIZE']),
         'sentence_delimiter': os.environ['SENTENCE_DELIMITER']
     }
-    input_subtitles = load_json_from_file('test1.json') 
-    converted_subtitles = reconstruct_strings(input_subtitles, **split_args)
+    input_subtitles_tmp = [item["content"] for item in input_subtitles["body"]]
+    converted_subtitles = reconstruct_strings(input_subtitles_tmp, **split_args)
     for index, subtitle in enumerate(converted_subtitles):
         if (index ==0):
             messages = message_template_1(subtitle)
         else:
             messages = message_template_2(summaries, subtitle)
         summaries = get_completion_from_messages(messages)
-        print(summaries)
+    return summaries         
+
 
 if __name__ == "__main__":
-    main()
+    # os.chdir('C:\\work\\chatgpt_subtitles')    
+    input_subtitles = load_json_from_file('test1.json') 
+    summaries = fetch_summaries(input_subtitles)
+    print(summaries)
 
 
 
