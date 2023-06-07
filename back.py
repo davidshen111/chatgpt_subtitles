@@ -6,6 +6,7 @@ import json
 
 from dotenv import load_dotenv, find_dotenv
 
+
 def load_json_from_file(file_name):
     try:
         with open(file_name, encoding="utf8") as f:
@@ -15,6 +16,7 @@ def load_json_from_file(file_name):
     except Exception as e:
         print(f"Error occurred while loading file '{file_name}': {str(e)}")
     return []
+
 
 def reconstruct_strings(strings, trunk_size, overlap_size, sentence_delimiter):
     result = []
@@ -45,6 +47,7 @@ def reconstruct_strings(strings, trunk_size, overlap_size, sentence_delimiter):
 
     return result
 
+
 def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0, max_tokens=1000):
     response = openai.ChatCompletion.create(
         model=model,
@@ -54,6 +57,7 @@ def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0,
     )
     print(response.usage)
     return response.choices[0].message["content"]
+
 
 def message_template_1 (user_message_1):
     delimiter = "####"
@@ -69,6 +73,7 @@ def message_template_1 (user_message_1):
          'content': f"{delimiter}{user_message_1}{delimiter}"}  
     ] 
     return messages
+
 
 def message_template_2 (user_message_1, user_message_2):
     delimiter = "####"
@@ -90,24 +95,28 @@ def message_template_2 (user_message_1, user_message_2):
     ] 
     return messages
 
-# os.chdir('C:\\work\\chatgpt_subtitles')
-_ = load_dotenv(find_dotenv()) # read local .env file
-openai.api_key  = os.environ['OPENAI_API_KEY']
-split_args = {
-    'trunk_size': int(os.environ['TRUNK_SIZE']),
-    'overlap_size': int(os.environ['OVERLAP_SIZE']),
-    'sentence_delimiter': os.environ['SENTENCE_DELIMITER']
-}
+
+def main():
+    # os.chdir('C:\\work\\chatgpt_subtitles')
+    _ = load_dotenv(find_dotenv()) # read local .env file
+    openai.api_key  = os.environ['OPENAI_API_KEY']
+    split_args = {
+        'trunk_size': int(os.environ['TRUNK_SIZE']),
+        'overlap_size': int(os.environ['OVERLAP_SIZE']),
+        'sentence_delimiter': os.environ['SENTENCE_DELIMITER']
+    }
+    input_subtitles = load_json_from_file('test1.json') 
+    converted_subtitles = reconstruct_strings(input_subtitles, **split_args)
+    for index, subtitle in enumerate(converted_subtitles):
+        if (index ==0):
+            messages = message_template_1(subtitle)
+        else:
+            messages = message_template_2(summaries, subtitle)
+        summaries = get_completion_from_messages(messages)
+        print(summaries)
+
+if __name__ == "__main__":
+    main()
 
 
-input_subtitles = load_json_from_file('test1.json') 
-converted_subtitles = reconstruct_strings(input_subtitles, **split_args)
-
-for index, subtitle in enumerate(converted_subtitles):
-    if (index ==0):
-        messages = message_template_1(subtitle)
-    else:
-        messages = message_template_2(summaries, subtitle)
-    summaries = get_completion_from_messages(messages) 
-    print(summaries)
 
