@@ -58,27 +58,9 @@ def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0,
 def message_template_1 (user_message_1):
     delimiter = "####"
     system_message = f"""
-    You are a proficient English teacher who excels in English writing and English-Chinese translation. \ 
-    Your task is to generate a overall summary and the parapragh's summaries based on user's input: \
-    The user's input will be delimited with {delimiter} characters. \
-    Follow below steps to generate the output: \
-    Step 1 - Translate the user's input from Chinese to English. \
-    Step 2 - Segment the user's input into several segmentations and summarize them repsectively. \
-             Delete the similar summaries if having. \
-             Use at most 80 words for each summary. \
-    Step 3 - Generate a overall summary.\
-             Use at most 80 words. \
-    Step 4 - Tanslate the segmentations' summaries and the overall summary into Chinese. \        
-    
-    The output must be a JSON string encoded in UTF-8, written in Chinese. and following the format: \
-    {{
-        "overall": "",
-        "segmentations": [
-            "",
-            "",
-            ...
-        ]
-    }} 
+    Your task is to generate an overall summary using the user's input. \
+    The user's input will be delimited by {delimiter} characters. \
+    The output should be a text in UTF-8 format, written in Chinese. 
     """   
     messages =  [ 
         {'role':'system', 
@@ -90,44 +72,15 @@ def message_template_1 (user_message_1):
 
 def message_template_2 (user_message_1, user_message_2):
     delimiter = "####"
-    delimiter1 = "#*#*"
     system_message = f"""
-    You are a proficient English teacher who excels in English writing and English-Chinese translation. \ 
-    Your task is to create a overall summary and the parapragh's summaries based on user's input: \
-    The user's input will be delimited with {delimiter} characters. \
-    This task is cumulative, and you already have the summary of the previous part of user's input. \
-    The summary includes one overall summray and several segmentations' summaries. \
-    It's delimited by {delimiter1} and follows the format: \
-    {{
-        "overall": "",
-        "segmentations": [
-            "",
-            "",
-            ...
-        ]
-    }} \
-    Previous summary: {delimiter1}{user_message_1}{delimiter1} \
-
-    Follow below steps to generate the output: \
-    Step 1 - Translate previous summary from Chinese to English. \
-    Step 2 - Translate user's input from Chinese to English. \
-    Step 3 - Segment the user's input, summarize the segmentations and append them into the existing segmentations' summaries. \
-             Delete the similar segmentations' summaries. \
-             Use at most 80 words for each summary. \
-    Step 4 - Update the existing overall summary by accumulating the new user's input. \
-             Do not simply overwrite the previous overall summary. \
-             Use at most 80 words. \
-    Step 5 - Tanslate the result from step 3 and step 4 into Chinese. \           
-         
-    This output must be a JSON string encoded in UTF-8, written in Chinese, and following the format: \
-    {{
-        "overall": "",
-        "segmentations": [
-            "",
-            "",
-            ...
-        ]
-    }} 
+    Your task is to generate an overall summary using the user's input. \
+    This is an accumulative task, and you already haves the summary from the previous input. \
+    The summary is enclosed within {delimiter} as shown: {delimiter}{user_message_1}{delimiter} \
+    
+    Update the existing summary by accumulating the user's new input. \
+    The user's new input will be enclosed by {delimiter} characters. \
+    Do not just overwrite the previous summary. \
+    The output should be a UTF-8 encoded text written in Chinese. \
     """   
     messages =  [ 
         {'role':'system', 
