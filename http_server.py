@@ -19,6 +19,4 @@ def process_summary():
    
 
 if __name__ == '__main__':
-    import os
-    os.chdir('C:\\work\\chatgpt_subtitles')    
     app.run(host='0.0.0.0', port=8000)
