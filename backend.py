@@ -114,8 +114,8 @@ def fetch_summaries(input_subtitles):
 
 
 if __name__ == "__main__":
-    # os.chdir('C:\\work\\chatgpt_subtitles')    
-    input_subtitles = load_json_from_file('test1.json') 
+    # os.chdir('C:\\work\\chatgpt_subtitles\src')    
+    input_subtitles = load_json_from_file('.\\test\\test1.json') 
     summaries = fetch_summaries(input_subtitles)
     print(summaries)
 
