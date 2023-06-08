@@ -2,4 +2,4 @@ python-dotenv
 utils
 openai
 flask
-
+gradio
