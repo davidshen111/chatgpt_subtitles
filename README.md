@@ -24,7 +24,7 @@
 docker build -t myapp .
 ```
 下面是dockerfile的部分内容，表明容器启用本地UI。
-如果想用远程来接收消息，请注释掉ui.py这行，启用http_server.py这行。
+如果想用远程方式，请注释掉ui.py这行，启用http_server.py这行。
 ```
 #start the gradio ui
 CMD ["python", "ui.py"]
@@ -34,11 +34,11 @@ CMD ["python", "ui.py"]
 ```
 - Start the docker
 
-If it's the HTTP Server
+For the HTTP Server
 ```
 docker run --name myapp -p 8000:8000 myapp
 ```
-If it's the Gadio UI
+For the Gadio UI
 ```
 docker run --name myapp -p 7860:7860 myapp
 ```
