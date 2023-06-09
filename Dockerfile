@@ -13,7 +13,10 @@ RUN pip install -r requirements.txt
 COPY ./src/.env ./src/*.py /app/
 
 # expose port
-EXPOSE 8000
+EXPOSE 8000 7860
+
+#start the gradio ui
+CMD ["python", "ui.py"]
 
 #start the http serrver
-CMD ["python", "http_server.py"]
+# CMD ["python", "http_server.py"]
