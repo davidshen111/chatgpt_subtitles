@@ -3,3 +3,5 @@ utils
 openai
 flask
 gradio
+langchain
+tiktoken

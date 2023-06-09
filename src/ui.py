@@ -10,17 +10,17 @@ def run_ui():
         outputs =  ['text'],
         title='Subtitles Summarizer',
         allow_flagging="never"
-    ).launch() 
+    ).launch(server_name="0.0.0.0", share=True) 
 
 def run_ui_logic(json_file, operation_type):
     with open(json_file.name, 'r', encoding="utf8") as file:
         json_str = file.read()
     json_data = json.loads(json_str)
-    summaries = fetch_summaries(json_data)
+    summaries = fetch_summaries(json_data, operation_type)
     return summaries
 
 if __name__ == '__main__':
-    os.chdir('C:\\work\\chatgpt_subtitles\src')
+    # os.chdir('C:\\work\\chatgpt_subtitles\src')
     run_ui()
 
     

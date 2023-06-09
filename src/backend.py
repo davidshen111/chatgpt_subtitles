@@ -1,10 +1,9 @@
 import os
-import openai
-import sys
-import utils
 import json
 
 from dotenv import load_dotenv, find_dotenv
+from by_langchain import fetch_by_langchain_mapreduce, fetch_by_langchain_refine
+from by_openai import fetch_by_openapi
 
 
 def load_json_from_file(file_name):
@@ -47,56 +46,8 @@ def reconstruct_strings(strings, trunk_size, overlap_size, sentence_delimiter):
     return result
 
 
-def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0, max_tokens=1000):
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-        temperature=temperature, 
-        max_tokens=max_tokens, 
-    )
-    print(response.usage)
-    return response.choices[0].message["content"]
-
-
-def message_template_1 (user_message_1):
-    delimiter = "####"
-    system_message = f"""
-    Your task is to generate an overall summary using the user's input. \
-    The user's input will be delimited by {delimiter} characters. \
-    The output should be a text in UTF-8 format, written in Chinese. 
-    """   
-    messages =  [ 
-        {'role':'system', 
-         'content': system_message}, 
-        {'role':'user',
-         'content': f"{delimiter}{user_message_1}{delimiter}"}  
-    ] 
-    return messages
-
-
-def message_template_2 (user_message_1, user_message_2):
-    delimiter = "####"
-    system_message = f"""
-    Your task is to generate an overall summary using the previous summary plus user's new input. \
-    This is an accumulative task. \
-    The previous summary is enclosed within {delimiter} as shown below: {delimiter}{user_message_1}{delimiter} \
-
-    Summarize the user's new input and incorporate it into the existing summary as the output. \
-    Update the output to ensure its coherence. \
-    The user's new input will be enclosed by {delimiter} characters. \
-    The output should be a UTF-8 encoded text written in Chinese. \
-    """   
-    messages =  [ 
-        {'role':'system', 
-         'content': system_message}, 
-        {'role':'user',
-         'content': f"{delimiter}{user_message_2}{delimiter}"}  
-    ] 
-    return messages
-
-def fetch_summaries(input_subtitles):
-    _ = load_dotenv(find_dotenv()) # read local .env file
-    openai.api_key  = os.environ['OPENAI_API_KEY']
+def fetch_summaries(input_subtitles, operation_type='openai API'):    
+    _ = load_dotenv(find_dotenv()) # read local .env file    
     split_args = {
         'trunk_size': int(os.environ['TRUNK_SIZE']),
         'overlap_size': int(os.environ['OVERLAP_SIZE']),
@@ -104,18 +55,18 @@ def fetch_summaries(input_subtitles):
     }
     input_subtitles_tmp = [item["content"] for item in input_subtitles["body"]]
     converted_subtitles = reconstruct_strings(input_subtitles_tmp, **split_args)
-    for index, subtitle in enumerate(converted_subtitles):
-        if (index ==0):
-            messages = message_template_1(subtitle)
-        else:
-            messages = message_template_2(summaries, subtitle)
-        summaries = get_completion_from_messages(messages)
-    return summaries         
+
+    if operation_type == 'openai API':      
+        return fetch_by_openapi(converted_subtitles)
+    if operation_type == 'langchain map-reduce': 
+        return fetch_by_langchain_mapreduce(converted_subtitles)
+    if operation_type == 'langchain refine': 
+        return fetch_by_langchain_refine(converted_subtitles)    
 
 
 if __name__ == "__main__":
-    # os.chdir('C:\\work\\chatgpt_subtitles\src')    
-    input_subtitles = load_json_from_file('.\\test\\test1.json') 
+    os.chdir('C:\\work\\chatgpt_subtitles\src')    
+    input_subtitles = load_json_from_file('..\\test\\test1.json') 
     summaries = fetch_summaries(input_subtitles)
     print(summaries)
 
