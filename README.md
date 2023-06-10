@@ -1,4 +1,4 @@
-# Subtitles Summary By Openai
+# 用OpenAI总结Bilibili字幕
 ## 简介
 这是一个关于OpenAI的练习，通过调用OpenAI API实现对Bilibili视频字幕的总结。
 
