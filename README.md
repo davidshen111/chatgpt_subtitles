@@ -15,11 +15,25 @@
 - 使用langchain map-reduce类型的load_summarize_chain方法。
 - 使用langchain refine类型的load_summarize_chain方法。
 
+## GUI
+
+![Screenshot 2023-06-10 105254](https://github.com/davidshen111/chatgpt_subtitles/assets/97799018/8b362272-79a3-400d-81da-f1bcf91e17e2)
+
+## 结果对比
+需要说明的是结果不仅和采用的方法有关，更重要的是由prompt的好坏来决定。
+- OpenAI API
+![Screenshot 2023-06-10 105816](https://github.com/davidshen111/chatgpt_subtitles/assets/97799018/95960b85-b1df-40a5-8983-983cb6b8c353)
+
+- Langchain map-reduce
+![Screenshot 2023-06-10 110145](https://github.com/davidshen111/chatgpt_subtitles/assets/97799018/a136088c-5c24-479b-a25f-58068e5fdaa8)
+
+- Langchain refine
+![Screenshot 2023-06-10 110702](https://github.com/davidshen111/chatgpt_subtitles/assets/97799018/128ded59-448b-4a5a-8409-00140517ae33)
 
 
 ## Docker Operation
 
-- Build the docker image
+- **Build the docker image**
 ```
 docker build -t myapp .
 ```
@@ -32,7 +46,7 @@ CMD ["python", "ui.py"]
 #start the http serrver
 # CMD ["python", "http_server.py"]
 ```
-- Start the docker
+- **Start the docker**
 
 For the HTTP Server
 ```
@@ -43,13 +57,13 @@ For the Gadio UI
 docker run --name myapp -p 7860:7860 myapp
 ```
 
-- The message example sent by curl command
+- **The message example sent by curl command**
 ```
 curl --location 'http://127.0.0.1:8000/summaries/bilibili' \
 --header 'Content-Type: application/json' \
 --data '@/C:/work/chatgpt_subtitles/test/test1.json'
 ```
 
-- Access the GUI
+- **Access the GUI**
 
 Open http://127.0.0.1:7860/ in your local browser
